@@ -20,8 +20,40 @@ MODEL_NAME = "gemini-2.5-flash-lite"
 # =================================================================
 st.set_page_config(page_title="Value Bridge Demo", page_icon="Bridge", layout="centered")
 
+st.markdown("""
+    <style>
+    /* 전체 배경색 변경 */
+    .stApp {
+        background-color: #F8F9FA;
+    }
+    
+    /* 입력창(텍스트 영역) 디자인 */
+    .stTextInput>div>div>input, .stTextArea>div>div>textarea {
+        background-color: white !important;
+        border-radius: 10px !important;
+        border: 1px solid #DDE1E6 !important;
+    }
+
+    /* 버튼 디자인 - 한양대 블루 적용 */
+    .stButton>button {
+        background-color: #003D7C !important;
+        color: white !important;
+        border-radius: 8px !important;
+        padding: 0.5rem 1rem !important;
+        border: none !important;
+        font-weight: bold !important;
+        width: 100%;
+    }
+    
+    /* 안내 문구 박스 둥글게 */
+    .stAlert {
+        border-radius: 10px !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 with streamlit_analytics.track():
-    st.title("Bridge Value Bridge")
+    st.title("Value Bridge")
     st.markdown("#### **경험을 기업의 언어로, '벨류 브릿지'**")
     st.write("사용자의 대학 생활과 스펙을 분석하여 핵심 키워드로 변환해 드립니다.")
 
