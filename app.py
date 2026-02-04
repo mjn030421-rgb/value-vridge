@@ -12,7 +12,7 @@ try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
 except:
     # 로컬 테스트용 (깃허브 업로드 전 반드시 확인!)
-    API_KEY = "AIzaSyARc0hXnOWx7XLXDrIgZMI3wN_O8bkG6F4"
+    API_KEY = "GEMINI_API_KEY"
 
 # 최신 SDK 방식인 Client 객체 생성
 client = genai.Client(api_key=API_KEY)
