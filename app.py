@@ -22,32 +22,41 @@ st.set_page_config(page_title="Value Bridge Demo", page_icon="Bridge", layout="c
 
 st.markdown("""
     <style>
-    /* 전체 배경색 변경 */
+    /* 1. 전체 배경색 (밝은 회색) */
     .stApp {
-        background-color: #F8F9FA;
+        background-color: #F8F9FA !important;
     }
     
-    /* 입력창(텍스트 영역) 디자인 */
+    /* 2. 모든 기본 글자색을 짙은 회색(#31333F)으로 고정 */
+    .stApp, .stMarkdown, p, li, span, label {
+        color: #31333F !important;
+    }
+
+    /* 3. 제목(Title)과 소제목(Header) 색상 강조 */
+    h1, h2, h3, h4 {
+        color: #003D7C !important; /* 한양대 블루 */
+        font-weight: 800 !important;
+    }
+
+    /* 4. 입력창 내부 글자색 및 배경 */
     .stTextInput>div>div>input, .stTextArea>div>div>textarea {
-        background-color: white !important;
-        border-radius: 10px !important;
+        color: #31333F !important;
+        background-color: #FFFFFF !important;
         border: 1px solid #DDE1E6 !important;
     }
 
-    /* 버튼 디자인 - 한양대 블루 적용 */
+    /* 5. 버튼 디자인 (배경은 진하게, 글자는 하얗게) */
     .stButton>button {
         background-color: #003D7C !important;
-        color: white !important;
+        color: #FFFFFF !important;
         border-radius: 8px !important;
-        padding: 0.5rem 1rem !important;
-        border: none !important;
         font-weight: bold !important;
-        width: 100%;
+        border: none !important;
     }
-    
-    /* 안내 문구 박스 둥글게 */
-    .stAlert {
-        border-radius: 10px !important;
+
+    /* 6. 결과창(Success/Info) 내부 글자색 수정 */
+    .stAlert p {
+        color: #31333F !important;
     }
     </style>
     """, unsafe_allow_html=True)
