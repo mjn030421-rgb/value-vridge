@@ -38,7 +38,7 @@ with streamlit_analytics.track():
     # 1. 제목 및 설명 (중복 제거됨)
     st.title("🌉 Value Bridge")
     st.markdown("#### **경험을 기업의 언어로, '벨류 브릿지'**")
-    st.write("사용자의 대학 생활과 스펙을 분석하여 타겟 기업이 선호하는 핵심 키워드로 변환해 드립니다.")
+    st.write("사용자의 대학 생활과 스펙을 분석하여 목표 기업이 선호하는 핵심 키워드로 변환해 드립니다.")
 
     st.divider() # 시각적 구분선
 
@@ -60,7 +60,7 @@ with streamlit_analytics.track():
                                   help="자소서에 쓰고 싶은 가장 핵심적인 경험을 적어주세요.")
 
         # 3. 폼 제출 버튼 (이제 이 버튼이 정상적으로 카운트됩니다!)
-        submit_button = st.form_submit_button("🔑 핵심 키워드 브릿지 생성")
+        submit_button = st.form_submit_button("🔑 핵심 키워드 브릿지 생성", key="generate_button")
 
     # 4. 버튼 클릭 시 로직 실행 (이 부분도 track 안에 있어야 합니다)
     if submit_button:
