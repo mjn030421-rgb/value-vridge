@@ -12,7 +12,7 @@ try:
     API_KEY = st.secrets["GEMINI_API_KEY"]
 except:
     # 로컬 테스트용 (깃허브 업로드 전 반드시 확인!)
-    API_KEY = st.secrets["GEMINI_API_KEY"] 
+    API_KEY = "AIzaSyARc0hXnOWx7XLXDrIgZMI3wN_O8bkG6F4"
 
 # 최신 SDK 방식인 Client 객체 생성
 client = genai.Client(api_key=API_KEY)
@@ -35,39 +35,41 @@ from google import genai
 
 # 2. 모든 UI 코드를 track()으로 감쌉니다.
 with streamlit_analytics.track():
+    # 1. 제목 및 설명 (중복 제거됨)
     st.title("🌉 Value Bridge")
-    # ... (기존 입력 폼 코드들) ...
-    
-    if st.button("🔑 핵심 키워드 브릿지 생성"):
-        # 이 버튼이 눌리는 횟수가 자동으로 기록됩니다!
-        st.write("분석 중...")
-        # ... (기존 로직) ...
+    st.markdown("#### **경험을 기업의 언어로, '벨류 브릿지'**")
+    st.write("사용자의 대학 생활과 스펙을 분석하여 타겟 기업이 선호하는 핵심 키워드로 변환해 드립니다.")
 
-st.title("🌉 Value Bridge")
-st.markdown("#### **경험을 기업의 언어로, '벨류 브릿지'**")
-st.write("사용자의 대학 생활과 스펙을 분석하여 타겟 기업이 선호하는 핵심 키워드로 변환해 드립니다.")
+    st.divider() # 시각적 구분선
 
-st.divider() # 시각적 구분선
+    # 2. 사용자 입력을 받기 위한 폼(Form) 생성
+    with st.form("value_bridge_form"):
+        st.info("💡 모든 항목을 입력할수록 더 정확한 분석 결과가 나옵니다.")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            school = st.text_input("📍 학교", placeholder="예: 한양대학교 ERICA")
+            major = st.text_input("📚 전공", placeholder="예: 경제학부")
+        with col2:
+            target_company = st.text_input("🏢 목표 기업", placeholder="예: 한국은행, 신한은행")
+            spec = st.text_input("📜 보유 자격증/어학", placeholder="예: AFPK, ADsP, 토익 900")
 
-# 사용자 입력을 받기 위한 폼(Form) 생성
-with st.form("value_bridge_form"):
-    st.info("💡 모든 항목을 입력할수록 더 정확한 분석 결과가 나옵니다.")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        school = st.text_input("📍 학교", placeholder="예: 한양대학교 ERICA")
-        major = st.text_input("📚 전공", placeholder="예: 경제학부")
-    with col2:
-        target_company = st.text_input("🏢 목표 기업", placeholder="예: 한국은행, 신한은행")
-        spec = st.text_input("📜 보유 자격증/어학", placeholder="예: AFPK, ADsP, 토익 900")
+        # 주요 경험 입력창
+        experience = st.text_area("🌟 주요 경험 및 활동", 
+                                  placeholder="예: 노동경제학 수업 중 파이썬을 활용한 데이터 분석 프로젝트 수행",
+                                  help="자소서에 쓰고 싶은 가장 핵심적인 경험을 적어주세요.")
 
-    # 주요 경험은 길게 작성할 수 있도록 text_area 사용
-    experience = st.text_area("🌟 주요 경험 및 활동", 
-                              placeholder="예: 노동경제학 수업 중 파이썬을 활용한 데이터 분석 프로젝트 수행",
-                              help="자소서에 쓰고 싶은 가장 핵심적인 경험을 적어주세요.")
+        # 3. 폼 제출 버튼 (이제 이 버튼이 정상적으로 카운트됩니다!)
+        submit_button = st.form_submit_button("🔑 핵심 키워드 브릿지 생성")
 
-    # 폼 제출 버튼
-    submit_button = st.form_submit_button("🔑 핵심 키워드 브릿지 생성")
+    # 4. 버튼 클릭 시 로직 실행 (이 부분도 track 안에 있어야 합니다)
+    if submit_button:
+        if not (school and major and target_company and experience):
+            st.error("분석을 위해 모든 항목을 입력해 주세요.")
+        else:
+            with st.spinner("AI가 당신의 가치를 분석 중입니다..."):
+                # ... (여기에 지난번 작성한 client.models.generate_content 로직을 넣으세요) ...
+                st.success("분석이 완료되었습니다!")
 
 # =================================================================
 # 3. [로직] API 호출 및 결과 출력
