@@ -21,32 +21,32 @@ MODEL_NAME = "gemini-2.5-flash-lite"
 st.set_page_config(page_title="Value Bridge Demo", page_icon="Bridge", layout="centered")
 
 with streamlit_analytics.track():
-    st.title("🌉 Value Bridge")
+    st.title("Bridge Value Bridge")
     st.markdown("#### **경험을 기업의 언어로, '벨류 브릿지'**")
-    st.write("사용자의 대학 생활과 스펙을 분석하여 목표 기업이 선호하는 핵심 키워드로 변환해 드립니다.")
+    st.write("사용자의 대학 생활과 스펙을 분석하여 핵심 키워드로 변환해 드립니다.")
 
     st.divider()
 
-    # 입력 폼 생성
-    with st.form("value_bridge_form"):
-        st.info("💡 모든 항목을 입력할수록 더 정확한 분석 결과가 나옵니다.")
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            school = st.text_input("📍 학교", placeholder="예: 한양대학교 ERICA")
-            major = st.text_input("📚 전공", placeholder="예: 경제학부")
-        with col2:
-            target_company = st.text_input("🏢 목표 기업", placeholder="예: 한국은행, 신한은행")
-            spec = st.text_input("📜 보유 자격증/어학", placeholder="예: AFPK, ADsP, 토익 900")
+    # 1. 폼(with st.form)을 제거하고 일반 레이아웃으로 변경
+    st.info("💡 모든 항목을 입력할수록 더 정확한 분석 결과가 나옵니다.")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        school = st.text_input("📍 학교", placeholder="예: 한양대학교 ERICA")
+        major = st.text_input("📚 전공", placeholder="예: 경제학부")
+    with col2:
+        target_company = st.text_input("🏢 목표 기업", placeholder="예: 한국은행, 신한은행")
+        spec = st.text_input("📜 보유 자격증/어학", placeholder="예: AFPK, ADsP, 토익 900")
 
-        experience = st.text_area("🌟 주요 경험 및 활동", 
-                                  placeholder="예: 노동경제학 수업 중 파이썬을 활용한 데이터 분석 프로젝트 수행",
-                                  help="자소서에 쓰고 싶은 가장 핵심적인 경험을 적어주세요.")
+    experience = st.text_area("🌟 주요 경험 및 활동", 
+                              placeholder="예: 노동경제학 수업 중 파이썬을 활용한 데이터 분석 프로젝트 수행")
 
-        # 제출 버튼 (고유 키 부여로 카운트 활성화)
-        submit_button = st.form_submit_button("🔑 핵심 키워드 브릿지 생성", key="generate_button")
-
-    # 버튼 클릭 시 실행될 단 하나의 로직
+    # 2. st.form_submit_button 대신 일반 st.button 사용 (key 필수!)
+    # 이 방식이 streamlit-analytics에서 가장 카운트가 잘 올라갑니다.
+    submit_button = st.button("🔑 핵심 키워드 브릿지 생성", key="real_generate_button")
+   
+   
+   # 버튼 클릭 시 실행될 단 하나의 로직
     if submit_button:
         if not (school and major and target_company and experience):
             st.error("분석을 위해 모든 항목을 입력해 주세요.")
