@@ -1,5 +1,6 @@
 import streamlit as st
 from google import genai  # 최신 google-genai 라이브러리 임포트
+import streamlit_analytics2 as streamlit_analytics # 1. 라이브러리 가져오기
 from google.genai import types
 
 # =================================================================
@@ -25,6 +26,22 @@ MODEL_NAME = "gemini-2.5-flash-lite"
 # =================================================================
 
 st.set_page_config(page_title="Value Bridge Demo", page_icon="🌉", layout="centered")
+
+import streamlit as st
+import streamlit_analytics2 as streamlit_analytics # 1. 라이브러리 가져오기
+from google import genai
+
+# ... (API 설정 부분) ...
+
+# 2. 모든 UI 코드를 track()으로 감쌉니다.
+with streamlit_analytics.track():
+    st.title("🌉 Value Bridge")
+    # ... (기존 입력 폼 코드들) ...
+    
+    if st.button("🔑 핵심 키워드 브릿지 생성"):
+        # 이 버튼이 눌리는 횟수가 자동으로 기록됩니다!
+        st.write("분석 중...")
+        # ... (기존 로직) ...
 
 st.title("🌉 Value Bridge")
 st.markdown("#### **경험을 기업의 언어로, '벨류 브릿지'**")
