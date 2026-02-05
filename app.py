@@ -120,7 +120,7 @@ with streamlit_analytics.track():
     elif st.session_state.step == 3:
         st.subheader("가장 빛나는 경험을 들려주세요 ✨")
         st.session_state.exp = st.text_area("🌟 주요 경험 및 활동", value=st.session_state.exp, 
-                                          placeholder="예: 노동경제학 프로젝트에서 파이썬 데이터 분석을 활용, 국민은행 인턴쉽 , 아르바이트 , 인생에서 격었던 경험 등등", height=200)
+                                          placeholder="예: 노동경제학 프로젝트에서 파이썬 데이터 분석을 활용, 인턴쉽 , 아르바이트 , 드러내고 싶은 경험", height=200)
         
         col1, col2 = st.columns(2)
         with col1:
