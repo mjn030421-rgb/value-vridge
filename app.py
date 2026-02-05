@@ -79,11 +79,8 @@ for key in ['school', 'major', 'target', 'job', 'exp', 'result']:
         st.session_state[key] = ""
 
 # 3. [추적] 모든 과정을 track()으로 감싸기
-# 기존 track 부분을 아래와 같이 수정 (password 인자를 뺍니다)
 with streamlit_analytics.track():
     st.title("Value Bridge")
-    
-    
     
     # 진행 바
     st.progress(st.session_state.step / 4, text=f"{st.session_state.step} / 4 단계 진행 중")
