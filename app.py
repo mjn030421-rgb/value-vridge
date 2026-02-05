@@ -83,12 +83,7 @@ for key in ['school', 'major', 'target', 'job', 'exp', 'result']:
 with streamlit_analytics.track():
     st.title("Value Bridge")
     
-    # 관리자 모드(?analytics=on)일 때만 비밀번호를 한 번 더 물어봄
-    if st.query_params.get("analytics") == "on":
-        admin_pass = st.text_input("데이터 보호를 위해 비밀번호를 입력하세요", type="value1234")
-        if admin_pass != "value1234":
-            st.warning("비밀번호가 일치하지 않아 통계 데이터를 숨깁니다.")
-            st.stop() # 비밀번호가 틀리면 여기서 실행 중단
+    
     
     # 진행 바
     st.progress(st.session_state.step / 4, text=f"{st.session_state.step} / 4 단계 진행 중")
