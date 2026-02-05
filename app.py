@@ -180,7 +180,7 @@ with streamlit_analytics.track():
                     4. 호칭은 반드시 '당신'으로 통일하여 리포트를 작성하세요.
                     """
                     
-                    response = client.models.generate_content(
+                    response = client.models.generate_content
                         model=MODEL_NAME,
                         contents=prompt,
                         config=types.GenerateContent
