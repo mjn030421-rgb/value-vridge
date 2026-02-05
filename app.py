@@ -137,7 +137,7 @@ with streamlit_analytics.track():
 
     # --- 4단계: 결과 리포트 ---
     elif st.session_state.step == 4:
-        st.subheader("🎯 성현님의 직무 맞춤형 리포트")
+        st.subheader("🎯직무 맞춤형 리포트")
         
         with st.spinner("AI 분석 리포트를 생성 중입니다..."):
             try:
