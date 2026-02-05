@@ -1,7 +1,7 @@
 import streamlit as st
 from google import genai
 from google.genai import types
-import streamlit_analytics2 
+import streamlit_analytics2 as streamlit_analytics
 
 # 1. [설정] 페이지 설정 및 API 연결
 st.set_page_config(page_title="Value Bridge", page_icon="🌉", layout="centered")
