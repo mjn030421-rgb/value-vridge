@@ -180,7 +180,27 @@ with streamlit_analytics.track():
                     4. 호칭은 반드시 '당신'으로 통일하여 리포트를 작성하세요.
                     """
                     
-                    response = client.models.generate_content
+                    response = client.models.generate_content(
                         model=MODEL_NAME,
                         contents=prompt,
-                        config=types.GenerateContent
+                        config=types.GenerateContentConfig(
+                            tools=[types.Tool(google_search=types.GoogleSearchRetrieval())]
+                        )
+                    )
+                    st.session_state.result = response.text
+                
+                st.markdown(f"### **{st.session_state.target} | {st.session_state.job} 분석 결과**")
+                st.markdown(st.session_state.result)
+                
+                st.divider()
+                st.link_button("수요조사 참여하고 분석 결과 저장하기", "https://forms.gle/your_link")
+                
+            except Exception as e:
+                st.error(f"분석 중 오류가 발생했습니다: {e}")
+
+        if st.button("처음부터 다시 하기"):
+            for k in ['school','major','target','job','exp','result']: st.session_state[k] = ""
+            st.session_state.spec_list = [""]; st.session_state.has_no_spec = False; st.session_state.step = 1; st.rerun()
+
+st.divider()
+st.caption("© 2026 Value Bridge Project. Hanyang Univ ERICA Economics.")
