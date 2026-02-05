@@ -6,25 +6,31 @@ import streamlit_analytics2 as streamlit_analytics
 # 1. [설정] 페이지 설정 및 API 연결
 st.set_page_config(page_title="Value Bridge", page_icon="🌉", layout="centered")
 
-# 디자인 테마 (글씨 시인성 1순위 강화)
+# 디자인 테마 (검정 글씨 및 가독성 최우선 강화)
 st.markdown("""
     <style>
     /* 전체 배경 흰색 고정 */
     .stApp { background-color: #FFFFFF !important; }
     
-    /* 모든 텍스트 색상을 아주 짙은 회색으로 강제 고정 */
-    h1, h2, h3, h4, p, span, label, div {
+    /* 1. 모든 일반 텍스트 및 레이블 검정색 고정 */
+    h1, h2, h3, h4, p, span, label, div, .stMarkdown {
         color: #191F28 !important;
     }
     
-    /* 입력창 내부 글씨와 배경 설정 */
+    /* 2. 입력창 디자인: 배경은 연회색, 글자는 진한 검정 */
     input, textarea, [data-baseweb="input"] {
         color: #191F28 !important;
-        background-color: #F2F4F6 !important; /* 연한 회색 배경으로 가독성 확보 */
+        background-color: #F2F4F6 !important;
         border-radius: 12px !important;
     }
 
-    /* 설명 박스 (파란색 포인트) */
+    /* 3. 가장 중요한 '예시 문구(Placeholder)' 색상 강제 지정 */
+    input::placeholder, textarea::placeholder {
+        color: #757575 !important;
+        opacity: 1 !important; /* 투명도 제거 */
+    }
+
+    /* 4. 서비스 소개 박스 글씨색 보정 */
     .intro-box {
         background-color: #E8F3FF !important;
         padding: 20px;
@@ -33,18 +39,21 @@ st.markdown("""
         margin-bottom: 25px;
     }
     .intro-box strong { color: #1B64DA !important; }
-    .intro-box p { color: #333D4B !important; font-size: 0.95rem; }
+    .intro-box p { color: #2D3436 !important; font-weight: 500; }
 
-    /* 버튼 스타일 */
+    /* 5. 버튼 스타일 (파란 배경에 흰 글씨) */
     .stButton>button {
         background-color: #3182F6 !important;
-        color: white !important;
+        color: #FFFFFF !important;
         border-radius: 14px !important;
         padding: 0.8rem 2rem !important;
         font-weight: 700 !important;
         width: 100%;
         border: none !important;
     }
+    
+    /* 성공/정보 메시지 박스 내부 글자색 */
+    .stAlert p { color: #191F28 !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -174,24 +183,4 @@ with streamlit_analytics.track():
                     response = client.models.generate_content(
                         model=MODEL_NAME,
                         contents=prompt,
-                        config=types.GenerateContentConfig(
-                            tools=[types.Tool(google_search=types.GoogleSearchRetrieval())]
-                        )
-                    )
-                    st.session_state.result = response.text
-                
-                st.markdown(f"### **{st.session_state.target} | {st.session_state.job} 분석 결과**")
-                st.markdown(st.session_state.result)
-                
-                st.divider()
-                st.link_button("수요조사 참여하고 분석 결과 저장하기", "https://forms.gle/your_link")
-                
-            except Exception as e:
-                st.error(f"분석 중 오류가 발생했습니다: {e}")
-
-        if st.button("처음부터 다시 하기"):
-            for k in ['school','major','target','job','exp','result']: st.session_state[k] = ""
-            st.session_state.spec_list = [""]; st.session_state.has_no_spec = False; st.session_state.step = 1; st.rerun()
-
-st.divider()
-st.caption("© 2026 Value Bridge Project. Hanyang Univ ERICA Economics.")
+                        config=types.GenerateContent
