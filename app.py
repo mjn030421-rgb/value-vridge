@@ -79,7 +79,7 @@ for key in ['school', 'major', 'target', 'job', 'exp', 'result']:
         st.session_state[key] = ""
 
 # 3. [추적] 모든 과정을 track()으로 감싸기
-with streamlit_analytics.track():
+with streamlit_analytics.track(password="value1234"):
     st.title("Value Bridge")
     
     # 진행 바
@@ -220,11 +220,11 @@ with streamlit_analytics.track():
                     st.markdown(st.session_state.result)
                 
                 st.divider()
-                st.link_button("수요조사 참여하고 분석 결과 저장하기", "https://forms.gle/your_link")
+                st.link_button("수요조사 참여하고 기프트콘 받아가기!", " https://docs.google.com/forms/d/e/1FAIpQLSd7cYP6QwTthzoEdlAyObugotZWGOYgqk7eJ323tvspGA0AGA/viewform")
                 
             except Exception as e:
                 st.error(f"분석 중 오류가 발생했습니다: {e}")
-                
+
         if st.button("처음부터 다시 하기"):
             for k in ['school','major','target','job','exp','result']: st.session_state[k] = ""
             st.session_state.spec_list = [""]; st.session_state.has_no_spec = False; st.session_state.step = 1; st.rerun()
