@@ -225,30 +225,6 @@ with streamlit_analytics.track():
                 with st.expander("📄 상세 컨설팅 리포트 전체 보기", expanded=True):
                     st.markdown(st.session_state.result)
                      
-                    .stExpander {
-                        border: none !important;
-                        background-color: #F8F9FA !important; /* 연한 회색으로 통일 */
-                        border-radius: 16px !important;
-                    }
-
-                    .stExpander summary {
-                        background-color: #F8F9FA !important;
-                        color: #191F28 !important; /* 글씨는 진한 검정 */
-                        font-weight: 700 !important;
-                        padding: 15px !important;
-                    }
-
-                    /* 마우스를 올렸을 때 흰색으로 변하는 문제 방지 */
-                    .stExpander summary:hover {
-                        color: #3182F6 !important; /* 마우스 올리면 파란색 포인트 */
-                    }
-
-                    /* 내용물 영역 배경색 */
-                    .stExpander [data-testid="stExpanderDetails"] {
-                        background-color: #FFFFFF !important;
-                        padding: 20px !important;
-                        border-radius: 0 0 16px 16px !important;
-}
                 
                 st.divider()
                 st.link_button("수요조사 참여하고 기프트콘 받아가기!", " https://docs.google.com/forms/d/e/1FAIpQLSd7cYP6QwTthzoEdlAyObugotZWGOYgqk7eJ323tvspGA0AGA/viewform")
