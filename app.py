@@ -224,7 +224,7 @@ with streamlit_analytics.track():
                 st.divider()
                 with st.expander("📄 상세 컨설팅 리포트 전체 보기", expanded=True):
                     st.markdown(st.session_state.result)
-                     /* 익스펜더 헤더 검정색 배경 고정 해제 */
+                     
                     .stExpander {
                         border: none !important;
                         background-color: #F8F9FA !important; /* 연한 회색으로 통일 */
