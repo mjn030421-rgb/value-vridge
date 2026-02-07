@@ -81,6 +81,12 @@ for key in ['school', 'major', 'target', 'job', 'exp', 'result']:
 # 3. [추적] 모든 과정을 track()으로 감싸기
 with streamlit_analytics.track():
     st.title("Value Bridge")
+
+    if st.query_params.get("analytics") == "on":
+        admin_pass = st.text_input("관리자 암호를 입력하세요", type="password")
+        if admin_pass != "value1234":
+            st.warning("비밀번호가 틀렸습니다. 통계 데이터를 불러올 수 없습니다.")
+            st.stop() # 여기서 실행 중단하여 데이터를 보호함
     
     # 진행 바
     st.progress(st.session_state.step / 4, text=f"{st.session_state.step} / 4 단계 진행 중")
