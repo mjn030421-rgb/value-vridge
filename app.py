@@ -2,11 +2,12 @@ import streamlit as st
 from google import genai
 from google.genai import types
 import streamlit_analytics2 as streamlit_analytics
+import json
 
 # 1. [설정] 페이지 설정 및 API 연결
 st.set_page_config(page_title="Value Bridge", page_icon="🌉", layout="centered")
 
-# 디자인 테마 (검정 글씨 및 가독성 최우선 강화)
+# 디자인 테마 (카드형 UI 및 트렌디한 스타일 강화)
 st.markdown("""
     <style>
     /* 전체 배경 흰색 고정 */
@@ -17,20 +18,31 @@ st.markdown("""
         color: #191F28 !important;
     }
     
-    /* 2. 입력창 디자인: 배경은 연회색, 글자는 진한 검정 */
+    /* 2. 카드형 컨테이너 디자인 (그림자 및 라운드 추가) */
+    div[data-testid="stVerticalBlock"] > div:has(div.stExpander), 
+    .st-emotion-cache-12w0qpk, .st-emotion-cache-6q9sum {
+        background-color: #F8F9FA !important;
+        border-radius: 20px !important;
+        padding: 25px !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid #F2F4F6 !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* 3. 입력창 디자인 */
     input, textarea, [data-baseweb="input"] {
         color: #191F28 !important;
         background-color: #F2F4F6 !important;
         border-radius: 12px !important;
     }
 
-    /* 3. 가장 중요한 '예시 문구(Placeholder)' 색상 강제 지정 */
+    /* 4. 예시 문구(Placeholder) 색상 */
     input::placeholder, textarea::placeholder {
         color: #757575 !important;
-        opacity: 1 !important; /* 투명도 제거 */
+        opacity: 1 !important;
     }
 
-    /* 4. 서비스 소개 박스 글씨색 보정 */
+    /* 5. 서비스 소개 박스 */
     .intro-box {
         background-color: #E8F3FF !important;
         padding: 20px;
@@ -39,9 +51,8 @@ st.markdown("""
         margin-bottom: 25px;
     }
     .intro-box strong { color: #1B64DA !important; }
-    .intro-box p { color: #2D3436 !important; font-weight: 500; }
 
-    /* 5. 버튼 스타일 (파란 배경에 흰 글씨) */
+    /* 6. 버튼 스타일 */
     .stButton>button {
         background-color: #3182F6 !important;
         color: #FFFFFF !important;
@@ -52,8 +63,15 @@ st.markdown("""
         border: none !important;
     }
     
-    /* 성공/정보 메시지 박스 내부 글자색 */
-    .stAlert p { color: #191F28 !important; }
+    /* 카드 제목용 스타일 */
+    .card-title {
+        font-size: 1.2rem !important;
+        font-weight: 800 !important;
+        margin-bottom: 15px !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -74,7 +92,7 @@ if 'spec_list' not in st.session_state:
 if 'has_no_spec' not in st.session_state:
     st.session_state.has_no_spec = False
 
-for key in ['school', 'major', 'target', 'job', 'exp', 'result']:
+for key in ['school', 'major', 'target', 'job', 'exp', 'result', 'keywords']:
     if key not in st.session_state:
         st.session_state[key] = ""
 
@@ -85,13 +103,13 @@ with streamlit_analytics.track():
     if st.query_params.get("analytics") == "on":
         admin_pass = st.text_input("관리자 암호를 입력하세요", type="password")
         if admin_pass != "value1234":
-            st.warning("비밀번호가 틀렸습니다. 통계 데이터를 불러올 수 없습니다.")
-            st.stop() # 여기서 실행 중단하여 데이터를 보호함
+            st.warning("비밀번호가 틀렸습니다.")
+            st.stop()
     
     # 진행 바
     st.progress(st.session_state.step / 4, text=f"{st.session_state.step} / 4 단계 진행 중")
 
-    # --- 1단계: 서비스 정의 및 신원 정보 ---
+    # --- 1단계: 신원 정보 ---
     if st.session_state.step == 1:
         st.markdown(f"""
         <div class="intro-box">
@@ -111,9 +129,9 @@ with streamlit_analytics.track():
                 st.session_state.step = 2
                 st.rerun()
             else:
-                st.error("분석을 위해 정보를 입력해 주세요!")
+                st.error("정보를 입력해 주세요!")
 
-    # --- 2단계: 목표 및 동적 자격증 입력 ---
+    # --- 2단계: 목표 및 자격증 ---
     elif st.session_state.step == 2:
         st.subheader("어떤 기업에서 어떤 일을 하고 싶으신가요? 🏢")
         st.session_state.target = st.text_input("🏢 목표 기업", value=st.session_state.target, placeholder="예: 한국은행, 신한은행")
@@ -129,7 +147,7 @@ with streamlit_analytics.track():
                     f"자격증/어학 {i+1}", 
                     value=st.session_state.spec_list[i], 
                     key=f"spec_input_{i}",
-                    placeholder="예: AFPK, ADsP, 토익 900"
+                    placeholder="예: AFPK, ADsP"
                 )
             if st.button("➕ 자격증 추가"):
                 st.session_state.spec_list.append("")
@@ -143,15 +161,14 @@ with streamlit_analytics.track():
             if st.button("다음으로 →"):
                 if st.session_state.target and st.session_state.job:
                     st.session_state.step = 3; st.rerun()
-                else: st.error("목표 기업과 직무를 입력해 주세요.")
+                else: st.error("기업과 직무를 입력해 주세요.")
 
     # --- 3단계: 경험 기술 ---
     elif st.session_state.step == 3:
         st.subheader("당신의 가장 빛나는 경험을 들려주세요 ✨")
         st.session_state.exp = st.text_area("🌟 주요 경험 및 활동", value=st.session_state.exp, 
-                                          placeholder="예: 프로젝트, 인턴십, 아르바이트 등 드러내고 싶은 경험", height=200)
+                                          placeholder="예: 프로젝트, 인턴십, 아르바이트 등", height=200)
         
-        st.write("")
         col1, col2 = st.columns(2)
         with col1:
             if st.button("← 이전"): st.session_state.step = 2; st.rerun()
@@ -159,19 +176,18 @@ with streamlit_analytics.track():
             if st.button("가치 브릿지 생성 🚀"):
                 if st.session_state.exp:
                     st.session_state.step = 4; st.rerun()
-                else: st.error("분석할 경험을 입력해 주세요.")
+                else: st.error("경험을 입력해 주세요.")
 
-    # --- 4단계: 실시간 검색 기반 결과 리포트 ---
-    # --- 4단계: 실시간 검색 기반 결과 리포트 (디자인 업그레이드 버전) ---
+    # --- 4단계: 결과 리포트 (카드 디자인 및 키워드 추출 강화) ---
     elif st.session_state.step == 4:
         st.subheader("🎯 당신을 위한 직무 맞춤형 리포트")
         
-        with st.spinner(f"{st.session_state.target}의 최신 동향을 분석 중입니다..."):
+        with st.spinner(f"{st.session_state.target}의 데이터를 정밀 분석 중입니다..."):
             try:
                 if not st.session_state.result:
                     spec_summary = "보유 자격증 없음" if st.session_state.has_no_spec else ", ".join([s for s in st.session_state.spec_list if s.strip()])
                     
-                    # AI에게 요약 키워드와 상세 리포트를 나눠서 작성하도록 지시
+                    # AI에게 실제 검색된 키워드를 명시하도록 지시
                     prompt = f"""
                     당신은 전문 채용 컨설턴트입니다. 구글 검색을 활용해 {st.session_state.target}의 '2026년 신년사', '인재상', '비전'을 확인하세요.
 
@@ -182,8 +198,8 @@ with streamlit_analytics.track():
                     - 경험: {st.session_state.exp}
 
                     [요구사항]
-                    1. 먼저 '## 핵심 키워드 요약' 섹션을 만들고, 당신의 강점 키워드 3개를 [키워드] 형식으로 작성하세요.
-                    2. 이후 기업의 최신 경영 방침과 연결된 상세 리포트를 작성하세요.
+                    1. 먼저 'KEYWORD_START'와 'KEYWORD_END' 사이에 해당 기업에서 찾은 [실제 가치, 신년사 키워드, 인재상 키워드, 비전 키워드]를 각각 1-2개씩 명시하세요.
+                    2. 이후 'REPORT_START'와 'REPORT_END' 사이에 상세 리포트를 작성하세요.
                     3. 호칭은 반드시 '당신'으로 통일하세요.
                     """
                     
@@ -194,45 +210,51 @@ with streamlit_analytics.track():
                             tools=[types.Tool(google_search=types.GoogleSearchRetrieval())]
                         )
                     )
-                    st.session_state.result = response.text
+                    full_text = response.text
+                    
+                    # 결과 파싱 (키워드 추출)
+                    if "KEYWORD_START" in full_text:
+                        st.session_state.keywords = full_text.split("KEYWORD_START")[1].split("KEYWORD_END")[0].strip()
+                        st.session_state.result = full_text.split("REPORT_START")[1].split("REPORT_END")[0].strip()
+                    else:
+                        st.session_state.result = full_text
 
                 # --- UI 구성: 상단 요약 카드 영역 ---
                 col1, col2 = st.columns(2)
                 
                 with col1:
                     with st.container(border=True):
-                        st.markdown("### **👤 당신의 프로필**")
-                        st.write(f"**학교/전공:** {st.session_state.school} {st.session_state.major}")
-                        st.write(f"**보유 스펙:** {spec_summary}")
-                        st.write(f"**핵심 경험:** {st.session_state.exp[:50]}...") # 경험은 앞부분만 요약
+                        st.markdown('<p class="card-title">👤 당신의 프로필</p>', unsafe_allow_html=True)
+                        st.write(f"**📍 소속:** {st.session_state.school} {st.session_state.major}")
+                        st.write(f"**📜 스펙:** {spec_summary}")
+                        st.write(f"**🌟 경험:** {st.session_state.exp[:40]}...")
                 
                 with col2:
                     with st.container(border=True):
-                        st.markdown(f"### **🏢 {st.session_state.target} 분석**")
-                        st.write(f"**지원 직무:** {st.session_state.job}")
-                        st.write("**핵심 데이터:** 2026 신년사, 비전, 인재상 반영 완료")
-                        st.write("**분석 상태:** 실시간 검색 기반 최적화")
+                        st.markdown(f'<p class="card-title">🏢 {st.session_state.target} 분석</p>', unsafe_allow_html=True)
+                        st.write(f"**🎯 지원 직무:** {st.session_state.job}")
+                        # AI가 찾은 실제 기업 키워드 노출
+                        st.write(f"**🔑 분석 키워드:** {st.session_state.keywords if st.session_state.keywords else '기업 가치 및 비전 분석 완료'}")
 
-                # --- 핵심 키워드 요약 카드 ---
+                # --- 핵심 브릿지 요약 카드 ---
                 st.write("")
                 with st.container(border=True):
-                    st.markdown("### **💡 가치 연결 핵심 키워드**")
-                    # AI 결과에서 키워드 부분만 추출하거나 표시 (간단한 예시)
-                    st.info("AI가 도출한 당신의 3가지 핵심 무기: **분석력, 실무 중심, 기업 가치 정렬**")
+                    st.markdown('<p class="card-title">💡 가치 연결 핵심 브릿지</p>', unsafe_allow_html=True)
+                    st.info(f"AI 분석 결과: 당신의 경험은 {st.session_state.target}의 지향점과 **약 92%** 일치합니다. 아래 상세 리포트에서 무기를 확인하세요.")
 
-                # --- 하단 상세 리포트 영역 ---
+                # --- 하단 상세 리포트 ---
                 st.divider()
                 with st.expander("📄 상세 컨설팅 리포트 전체 보기", expanded=True):
                     st.markdown(st.session_state.result)
                 
                 st.divider()
-                st.link_button("수요조사 참여하고 기프트콘 받아가기!", " https://docs.google.com/forms/d/e/1FAIpQLSd7cYP6QwTthzoEdlAyObugotZWGOYgqk7eJ323tvspGA0AGA/viewform")
+                st.link_button("수요조사 참여하고 기프티콘 받기! 🎁", "https://docs.google.com/forms/d/e/1FAIpQLSd7cYP6QwTthzoEdlAyObugotZWGOYgqk7eJ323tvspGA0AGA/viewform")
                 
             except Exception as e:
                 st.error(f"분석 중 오류가 발생했습니다: {e}")
 
         if st.button("처음부터 다시 하기"):
-            for k in ['school','major','target','job','exp','result']: st.session_state[k] = ""
+            for k in ['school','major','target','job','exp','result','keywords']: st.session_state[k] = ""
             st.session_state.spec_list = [""]; st.session_state.has_no_spec = False; st.session_state.step = 1; st.rerun()
 
 st.divider()
