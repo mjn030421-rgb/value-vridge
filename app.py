@@ -6,7 +6,7 @@ import streamlit_analytics2 as streamlit_analytics
 # 1. [설정] 페이지 설정
 st.set_page_config(page_title="Value Bridge", page_icon="🌉", layout="centered")
 
-# --- 디자인 테마 (CSS 수정: 진행바 교체, 공백 제거, 색상 보정) ---
+# --- 디자인 테마 (CSS 수정: 자격증 버튼 투명화, 라벨 스타일 통일) ---
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -14,7 +14,7 @@ st.markdown("""
     /* 기본 폰트 및 배경 */
     .stApp { background-color: #F9FAFB !important; font-family: 'Pretendard', sans-serif !important; }
 
-    /* [수정 1] Hero Section - 글씨색 완전 하얀색 고정 */
+    /* Hero Section - 글씨색 완전 하얀색 고정 */
     .hero-section {
         background: linear-gradient(135deg, #4854e0 0%, #6b74e8 100%);
         padding: 50px 30px;
@@ -26,16 +26,16 @@ st.markdown("""
     .hero-title { 
         font-size: 2.5rem !important; 
         font-weight: 800 !important; 
-        color: #FFFFFF !important; /* 완전 하얀색 */
+        color: #FFFFFF !important;
         margin-bottom: 10px; 
     }
     .hero-sub { 
         font-size: 1rem !important; 
-        color: #FFFFFF !important; /* 완전 하얀색 */
+        color: #FFFFFF !important;
         opacity: 0.9;
     }
 
-    /* [수정 2] 커스텀 진행 바 스타일 */
+    /* 커스텀 진행 바 스타일 */
     .progress-container {
         width: 100%;
         background-color: #E5E7EB;
@@ -58,14 +58,14 @@ st.markdown("""
         font-weight: 600;
     }
 
-    /* [수정 4] 둥근 카드 스타일 - 여백(Padding/Margin) 줄여서 공백 제거 */
+    /* 둥근 카드 스타일 */
     [data-testid="stVerticalBlock"] > div:has(div.stMarkdown) {
         background-color: white !important;
         border-radius: 24px !important;
-        padding: 20px !important; /* 패딩 축소 */
+        padding: 20px !important;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05) !important;
         border: 1px solid #F3F4F6 !important;
-        margin-bottom: 15px !important; /* 마진 축소 */
+        margin-bottom: 15px !important;
     }
 
     /* 텍스트 색상 (검정 고정) */
@@ -80,14 +80,7 @@ st.markdown("""
     }
     input::placeholder { color: #9CA3AF !important; }
 
-    /* [수정 3] 자격증 체크박스 글씨 - 밝은 브랜드 컬러로 변경 */
-    [data-testid="stCheckbox"] label p {
-        color: #4854e0 !important; /* 밝은 보라/블루 */
-        font-weight: 700 !important;
-        font-size: 1rem !important;
-    }
-
-    /* 버튼 스타일 - 글씨색 흰색 강제 고정 */
+    /* [수정] 메인 버튼 (다음으로, 분석하기 등) - 그라디언트 & 흰색 글씨 */
     .stButton>button {
         background: linear-gradient(90deg, #4854e0 0%, #6b74e8 100%) !important;
         color: #FFFFFF !important;
@@ -102,10 +95,9 @@ st.markdown("""
     .stButton>button:hover { 
         transform: translateY(-2px); 
         box-shadow: 0 6px 20px rgba(72, 84, 224, 0.4) !important; 
-        color: #FFFFFF !important;
     }
 
-    /* 이전 버튼 회색 스타일 */
+    /* [수정] '이전' 버튼 - 회색 스타일 */
     div[data-testid="column"] .stButton>button:has(div:contains("이전")) {
         background: #F3F4F6 !important;
         color: #4B5563 !important;
@@ -115,7 +107,22 @@ st.markdown("""
         color: #4B5563 !important;
     }
 
-    /* 익스펜더(상세 리포트) 스타일 */
+    /* [수정] '자격증 추가' 버튼 - 투명 배경 & 보라색 글씨 (피그마 스타일) */
+    button:has(div:contains("자격증 추가")) {
+        background: transparent !important;
+        border: 1px dashed #4854e0 !important; /* 살짝 점선 테두리 추천 (피그마 느낌) */
+        box-shadow: none !important;
+        color: #4854e0 !important;
+    }
+    button:has(div:contains("자격증 추가")) * {
+        color: #4854e0 !important;
+        font-weight: 700 !important;
+    }
+    button:has(div:contains("자격증 추가")):hover {
+        background-color: #F5F7FF !important; /* 호버 시 아주 연한 보라 */
+    }
+
+    /* 익스펜더 스타일 */
     .stExpander {
         background-color: #FFFFFF !important;
         border: 1px solid #E5E8EB !important;
@@ -128,10 +135,6 @@ st.markdown("""
         background-color: #F9FAFB !important;
         border-radius: 16px !important;
         padding: 15px !important;
-    }
-    .stExpander details summary:hover {
-        color: #1B64DA !important;
-        background-color: #F0F4FF !important;
     }
 
     /* 결과 화면 카드 헤더 */
@@ -205,7 +208,6 @@ with streamlit_analytics.track():
         </div>
     """, unsafe_allow_html=True)
 
-    # [수정 2 적용] 피그마 스타일 커스텀 진행 바
     render_progress_bar(st.session_state.step, 4)
 
     # --- 1단계: 소속 정보 ---
@@ -225,14 +227,24 @@ with streamlit_analytics.track():
         st.session_state.target = st.text_input("🏢 목표 기업", value=st.session_state.target, placeholder="예: 한국은행, 신한은행")
         st.session_state.job = st.text_input("🎯 목표 직무", value=st.session_state.job, placeholder="예: 금융상품 기획, 리스크 관리")
         
-        st.markdown("##### 📜 보유 자격증/어학 성적")
-        # [수정 3 적용] CSS로 인해 체크박스 글씨가 밝은 보라/블루로 보임
+        # [수정] 라벨 스타일을 HTML로 직접 구현하여 배경 박스 제거 및 스타일 통일
+        st.write("")
+        st.markdown("""
+            <div style="font-size: 14px; font-weight: 400; color: #31333F; margin-bottom: 8px;">
+            📜 보유 자격증/어학 성적
+            </div>
+        """, unsafe_allow_html=True)
+        
         st.session_state.has_no_spec = st.checkbox("보유한 자격증이 없습니다 (없음)", value=st.session_state.has_no_spec)
         
         if not st.session_state.has_no_spec:
             for i in range(len(st.session_state.spec_list)):
                 st.session_state.spec_list[i] = st.text_input(f"자격증 {i+1}", value=st.session_state.spec_list[i], key=f"s_{i}", label_visibility="collapsed", placeholder="예: AFPK, ADsP, 토익 900")
-            if st.button("➕ 자격증 추가"): st.session_state.spec_list.append(""); st.rerun()
+            
+            # [수정] '자격증 추가' 버튼 (CSS에서 투명 배경 & 보라색 글씨 적용됨)
+            if st.button("＋ 자격증 추가"): 
+                st.session_state.spec_list.append("")
+                st.rerun()
             
         st.write("")
         col1, col2 = st.columns(2)
@@ -360,7 +372,6 @@ with streamlit_analytics.track():
             st.write(f"**기업명:** {st.session_state.target}")
             st.write(f"**직무:** {st.session_state.job}")
 
-        # [수정 4] 불필요한 st.markdown("") 제거로 공백 삭제
         with st.container():
             st.markdown("<div class='result-header'>🔑 AI 분석 핵심 키워드</div>", unsafe_allow_html=True)
             
@@ -392,7 +403,6 @@ with streamlit_analytics.track():
         with st.expander("리포트 전체 보기 (클릭하여 열기)", expanded=False):
             st.markdown(st.session_state.result)
         
-        # [수정 4] 공백 제거
         st.markdown("""
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSd7cYP6QwTthzoEdlAyObugotZWGOYgqk7eJ323tvspGA0AGA/viewform" target="_blank" class="gift-button">
             🎁 수요조사 참여하고 기프티콘 받기! (클릭)
