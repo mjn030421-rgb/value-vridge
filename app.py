@@ -6,7 +6,7 @@ import streamlit_analytics2 as streamlit_analytics
 # 1. [설정] 페이지 설정
 st.set_page_config(page_title="Value Bridge", page_icon="🌉", layout="centered")
 
-# --- 디자인 테마 (가독성 및 레이아웃 최적화) ---
+# --- 디자인 테마 (CSS 수정: 진행바 교체, 공백 제거, 색상 보정) ---
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -14,27 +14,58 @@ st.markdown("""
     /* 기본 폰트 및 배경 */
     .stApp { background-color: #F9FAFB !important; font-family: 'Pretendard', sans-serif !important; }
 
-    /* Hero Section */
+    /* [수정 1] Hero Section - 글씨색 완전 하얀색 고정 */
     .hero-section {
         background: linear-gradient(135deg, #4854e0 0%, #6b74e8 100%);
         padding: 50px 30px;
         border-radius: 0 0 40px 40px;
-        color: white !important;
         text-align: center;
         margin: -60px -100px 30px -100px;
         box-shadow: 0 10px 30px rgba(72, 84, 224, 0.2);
     }
-    .hero-title { font-size: 2.5rem !important; font-weight: 800 !important; color: white !important; margin-bottom: 10px; }
-    .hero-sub { font-size: 1rem !important; color: rgba(255,255,255,0.9) !important; }
+    .hero-title { 
+        font-size: 2.5rem !important; 
+        font-weight: 800 !important; 
+        color: #FFFFFF !important; /* 완전 하얀색 */
+        margin-bottom: 10px; 
+    }
+    .hero-sub { 
+        font-size: 1rem !important; 
+        color: #FFFFFF !important; /* 완전 하얀색 */
+        opacity: 0.9;
+    }
 
-    /* 둥근 카드 스타일 */
+    /* [수정 2] 커스텀 진행 바 스타일 */
+    .progress-container {
+        width: 100%;
+        background-color: #E5E7EB;
+        border-radius: 20px;
+        margin-bottom: 25px;
+        height: 12px;
+        overflow: hidden;
+    }
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4854e0 0%, #6b74e8 100%);
+        border-radius: 20px;
+        transition: width 0.5s ease-in-out;
+    }
+    .progress-text {
+        text-align: right;
+        font-size: 0.85rem;
+        color: #6B7280;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    /* [수정 4] 둥근 카드 스타일 - 여백(Padding/Margin) 줄여서 공백 제거 */
     [data-testid="stVerticalBlock"] > div:has(div.stMarkdown) {
         background-color: white !important;
         border-radius: 24px !important;
-        padding: 24px !important;
+        padding: 20px !important; /* 패딩 축소 */
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05) !important;
         border: 1px solid #F3F4F6 !important;
-        margin-bottom: 20px !important;
+        margin-bottom: 15px !important; /* 마진 축소 */
     }
 
     /* 텍스트 색상 (검정 고정) */
@@ -48,6 +79,13 @@ st.markdown("""
         color: #1F2937 !important;
     }
     input::placeholder { color: #9CA3AF !important; }
+
+    /* [수정 3] 자격증 체크박스 글씨 - 밝은 브랜드 컬러로 변경 */
+    [data-testid="stCheckbox"] label p {
+        color: #4854e0 !important; /* 밝은 보라/블루 */
+        font-weight: 700 !important;
+        font-size: 1rem !important;
+    }
 
     /* 버튼 스타일 - 글씨색 흰색 강제 고정 */
     .stButton>button {
@@ -77,7 +115,7 @@ st.markdown("""
         color: #4B5563 !important;
     }
 
-    /* 익스펜더(상세 리포트) 스타일 - 밝은 배경 */
+    /* 익스펜더(상세 리포트) 스타일 */
     .stExpander {
         background-color: #FFFFFF !important;
         border: 1px solid #E5E8EB !important;
@@ -101,9 +139,9 @@ st.markdown("""
         font-size: 1.1rem;
         font-weight: 800;
         color: #4854e0 !important;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         border-bottom: 2px solid #F3F4F6;
-        padding-bottom: 8px;
+        padding-bottom: 5px;
     }
 
     /* 요약 태그 스타일 */
@@ -147,6 +185,16 @@ if 'has_no_spec' not in st.session_state: st.session_state.has_no_spec = False
 for key in ['school', 'major', 'target', 'job', 'exp', 'result', 'summary_major', 'summary_corp', 'summary_bridge']:
     if key not in st.session_state: st.session_state[key] = ""
 
+# [기능 함수] 커스텀 진행바 렌더링
+def render_progress_bar(step, total_steps):
+    percent = int((step / total_steps) * 100)
+    st.markdown(f"""
+        <div class="progress-text">{step} / {total_steps} 단계 진행 중 ({percent}%)</div>
+        <div class="progress-container">
+            <div class="progress-bar-fill" style="width: {percent}%;"></div>
+        </div>
+    """, unsafe_allow_html=True)
+
 # [메인 로직]
 with streamlit_analytics.track():
     # Hero Section
@@ -157,7 +205,8 @@ with streamlit_analytics.track():
         </div>
     """, unsafe_allow_html=True)
 
-    st.progress(st.session_state.step / 4)
+    # [수정 2 적용] 피그마 스타일 커스텀 진행 바
+    render_progress_bar(st.session_state.step, 4)
 
     # --- 1단계: 소속 정보 ---
     if st.session_state.step == 1:
@@ -172,49 +221,50 @@ with streamlit_analytics.track():
 
     # --- 2단계: 목표 및 자격증 ---
     elif st.session_state.step == 2:
-        st.subheader("목표 기업과 보유 자격증을 입력하세요 🏢")
-        st.session_state.target = st.text_input("🏢 목표 기업", value=st.session_state.target)
-        st.session_state.job = st.text_input("🎯 목표 직무", value=st.session_state.job)
+        st.subheader("어떤 기업에서 어떤 일을 하고 싶으신가요? 🏢")
+        st.session_state.target = st.text_input("🏢 목표 기업", value=st.session_state.target, placeholder="예: 한국은행, 신한은행")
+        st.session_state.job = st.text_input("🎯 목표 직무", value=st.session_state.job, placeholder="예: 금융상품 기획, 리스크 관리")
         
-        st.markdown("##### 📜 자격증 / 어학")
-        st.session_state.has_no_spec = st.checkbox("보유한 자격증이 없습니다", value=st.session_state.has_no_spec)
+        st.markdown("##### 📜 보유 자격증/어학 성적")
+        # [수정 3 적용] CSS로 인해 체크박스 글씨가 밝은 보라/블루로 보임
+        st.session_state.has_no_spec = st.checkbox("보유한 자격증이 없습니다 (없음)", value=st.session_state.has_no_spec)
         
         if not st.session_state.has_no_spec:
             for i in range(len(st.session_state.spec_list)):
-                st.session_state.spec_list[i] = st.text_input(f"자격증 {i+1}", value=st.session_state.spec_list[i], key=f"s_{i}", label_visibility="collapsed", placeholder="자격증 명을 입력하세요")
+                st.session_state.spec_list[i] = st.text_input(f"자격증 {i+1}", value=st.session_state.spec_list[i], key=f"s_{i}", label_visibility="collapsed", placeholder="예: AFPK, ADsP, 토익 900")
             if st.button("➕ 자격증 추가"): st.session_state.spec_list.append(""); st.rerun()
             
         st.write("")
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("← 이전 단계"): st.session_state.step = 1; st.rerun()
+            if st.button("← 이전"): st.session_state.step = 1; st.rerun()
         with col2:
             if st.button("다음으로 →"):
                 if st.session_state.target and st.session_state.job: st.session_state.step = 3; st.rerun()
-                else: st.error("기업과 직무를 입력해 주세요.")
+                else: st.error("목표 기업과 직무를 입력해 주세요.")
 
     # --- 3단계: 경험 기술 ---
     elif st.session_state.step == 3:
-        st.subheader("당신의 빛나는 경험을 들려주세요 ✨")
-        st.session_state.exp = st.text_area("🌟 주요 경험", value=st.session_state.exp, height=200, placeholder="프로젝트, 인턴, 대외활동 등 직무와 관련된 경험을 자유롭게 적어주세요.")
+        st.subheader("당신의 가장 빛나는 경험을 들려주세요 ✨")
+        st.session_state.exp = st.text_area("🌟 주요 경험 및 활동", value=st.session_state.exp, height=200, placeholder="예: 프로젝트, 인턴십, 아르바이트 등 드러내고 싶은 경험")
         
         st.write("")
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("← 이전 단계"): st.session_state.step = 2; st.rerun()
+            if st.button("← 이전"): st.session_state.step = 2; st.rerun()
         with col2:
             if st.button("가치 브릿지 생성 🚀"):
                 if st.session_state.exp: st.session_state.step = 4; st.rerun()
-                else: st.error("경험 내용을 입력해 주세요.")
+                else: st.error("분석할 경험을 입력해 주세요.")
 
-    # --- 4단계: 결과 리포트 (포맷팅 및 레이아웃 수정) ---
+    # --- 4단계: 결과 리포트 (공백 최소화 적용) ---
     elif st.session_state.step == 4:
         if not st.session_state.result:
             with st.spinner(f"{st.session_state.target}의 최신 데이터를 분석 중입니다..."):
                 try:
                     spec_summary = "보유 자격증 없음" if st.session_state.has_no_spec else ", ".join([s for s in st.session_state.spec_list if s.strip()])
                     
-                    # [수정된 프롬프트: 마크다운 포맷팅 강조]
+                    # [프롬프트 유지]
                     prompt = f"""
                     [역할 정의]
                     당신은 대기업 및 금융권 채용을 정밀 분석하는 **'HR 컨설턴트 겸 애널리스트'**입니다. 구글 검색을 통해 목표 기업의 최신 동향과 보유 자격증의 실무적 가치를 조사하여 **[VALUE BRIDGE 리포트]**를 작성하세요.
@@ -225,8 +275,8 @@ with streamlit_analytics.track():
 
                     [수행 원칙]
                     1. 호칭은 '당신'으로 통일하세요.
-                    2. 모든 제목과 핵심 키워드는 **굵게(Bold)** 처리하세요.
-                    3. 항목 사이에는 반드시 줄바꿈을 넣어 가독성을 높이세요.
+                    2. 모든 제목은 **굵게(Bold)** 처리하세요.
+                    3. 세세한 항목 사이에는 반드시 줄바꿈을 넣어 가독성을 높이세요.
                     
                     [지원자 정보]
                     - 전공: {st.session_state.major}
@@ -281,7 +331,6 @@ with streamlit_analytics.track():
                     )
                     full_text = response.text
                     
-                    # 데이터 파싱
                     if "[[SUMMARY_START]]" in full_text:
                         summary_part = full_text.split("[[SUMMARY_START]]")[1].split("[[SUMMARY_END]]")[0]
                         for line in summary_part.split('\n'):
@@ -298,10 +347,9 @@ with streamlit_analytics.track():
                     st.error(f"분석 중 문제가 발생했습니다. (Error: {e})")
                     st.info("💡 팁: 잠시 후 다시 시도해 주세요.")
 
-        # --- [결과 화면 UI: 레이아웃 변경] ---
+        # --- [결과 화면 UI: 공백 제거 및 구조화] ---
         st.subheader("🎯 분석 결과 요약")
 
-        # 1. 기본 정보
         col1, col2 = st.columns(2)
         with col1:
             st.markdown("<div class='result-header'>👤 지원자 정보</div>", unsafe_allow_html=True)
@@ -311,15 +359,11 @@ with streamlit_analytics.track():
             st.markdown("<div class='result-header'>🏢 목표 정보</div>", unsafe_allow_html=True)
             st.write(f"**기업명:** {st.session_state.target}")
             st.write(f"**직무:** {st.session_state.job}")
-            st.caption("✅ AI 실시간 분석 완료")
 
-        st.markdown("")
-        
-        # 2. 핵심 키워드 요약 존 (2열 + 1행 구조)
+        # [수정 4] 불필요한 st.markdown("") 제거로 공백 삭제
         with st.container():
             st.markdown("<div class='result-header'>🔑 AI 분석 핵심 키워드</div>", unsafe_allow_html=True)
             
-            # [수정됨] 전공 역량과 기업 가치를 나란히 배치
             k_col1, k_col2 = st.columns(2)
             with k_col1:
                 st.markdown(f"**📘 {st.session_state.major} 핵심 역량**")
@@ -333,9 +377,8 @@ with streamlit_analytics.track():
                     for tag in st.session_state.summary_corp.split(','):
                         st.markdown(f"<span class='summary-tag tag-corp'>{tag.strip()}</span>", unsafe_allow_html=True)
 
-            st.markdown("---") # 구분선
+            st.markdown("---")
             
-            # [수정됨] 브릿지 키워드를 아래에 넓게 배치
             st.markdown("**🚀 가치 연결 브릿지 키워드 (핵심)**")
             if st.session_state.summary_bridge:
                 for tag in st.session_state.summary_bridge.split(','):
@@ -345,20 +388,17 @@ with streamlit_analytics.track():
 
         st.divider()
 
-        # 3. 상세 리포트
         st.markdown("### 📄 상세 컨설팅 리포트")
-        # 익스펜더를 기본적으로 열어두거나 닫아둘 수 있음 (expanded=False로 하면 닫힘)
         with st.expander("리포트 전체 보기 (클릭하여 열기)", expanded=False):
             st.markdown(st.session_state.result)
         
-        st.write("")
+        # [수정 4] 공백 제거
         st.markdown("""
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSd7cYP6QwTthzoEdlAyObugotZWGOYgqk7eJ323tvspGA0AGA/viewform" target="_blank" class="gift-button">
             🎁 수요조사 참여하고 기프티콘 받기! (클릭)
             </a>
         """, unsafe_allow_html=True)
         
-        st.write("")
         if st.button("🔄 처음부터 다시 하기"):
             for k in ['school','major','target','job','exp','result','summary_major','summary_corp','summary_bridge']: st.session_state[k] = ""
             st.session_state.spec_list = [""]; st.session_state.has_no_spec = False; st.session_state.step = 1; st.rerun()
