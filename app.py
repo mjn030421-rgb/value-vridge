@@ -6,15 +6,14 @@ import streamlit_analytics2 as streamlit_analytics
 # 1. [설정] 페이지 설정
 st.set_page_config(page_title="Value Bridge", page_icon="🌉", layout="centered")
 
-# --- 디자인 테마 (CSS 수정: 자격증 버튼 투명화, 라벨 스타일 통일) ---
+# --- 디자인 테마 ---
 st.markdown("""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     
-    /* 기본 폰트 및 배경 */
     .stApp { background-color: #F9FAFB !important; font-family: 'Pretendard', sans-serif !important; }
 
-    /* Hero Section - 글씨색 완전 하얀색 고정 */
+    /* Hero Section */
     .hero-section {
         background: linear-gradient(135deg, #4854e0 0%, #6b74e8 100%);
         padding: 50px 30px;
@@ -35,7 +34,7 @@ st.markdown("""
         opacity: 0.9;
     }
 
-    /* 커스텀 진행 바 스타일 */
+    /* 진행 바 */
     .progress-container {
         width: 100%;
         background-color: #E5E7EB;
@@ -68,10 +67,10 @@ st.markdown("""
         margin-bottom: 15px !important;
     }
 
-    /* 텍스트 색상 (검정 고정) */
+    /* 텍스트 색상 */
     h2, h3, h4, p, span, label, div { color: #1F2937 !important; }
     
-    /* 입력창 디자인 */
+    /* 입력창 */
     input, textarea, [data-baseweb="input"] {
         background-color: #F9FAFB !important;
         border: 1px solid #E5E7EB !important;
@@ -80,7 +79,14 @@ st.markdown("""
     }
     input::placeholder { color: #9CA3AF !important; }
 
-    /* [수정] 메인 버튼 (다음으로, 분석하기 등) - 그라디언트 & 흰색 글씨 */
+    /* 체크박스 글씨 */
+    [data-testid="stCheckbox"] label p {
+        color: #4854e0 !important;
+        font-weight: 700 !important;
+        font-size: 1rem !important;
+    }
+
+    /* 버튼 스타일 */
     .stButton>button {
         background: linear-gradient(90deg, #4854e0 0%, #6b74e8 100%) !important;
         color: #FFFFFF !important;
@@ -95,9 +101,10 @@ st.markdown("""
     .stButton>button:hover { 
         transform: translateY(-2px); 
         box-shadow: 0 6px 20px rgba(72, 84, 224, 0.4) !important; 
+        color: #FFFFFF !important;
     }
 
-    /* [수정] '이전' 버튼 - 회색 스타일 */
+    /* 이전 버튼 */
     div[data-testid="column"] .stButton>button:has(div:contains("이전")) {
         background: #F3F4F6 !important;
         color: #4B5563 !important;
@@ -107,10 +114,10 @@ st.markdown("""
         color: #4B5563 !important;
     }
 
-    /* [수정] '자격증 추가' 버튼 - 투명 배경 & 보라색 글씨 (피그마 스타일) */
+    /* 자격증 추가 버튼 */
     button:has(div:contains("자격증 추가")) {
         background: transparent !important;
-        border: 1px dashed #4854e0 !important; /* 살짝 점선 테두리 추천 (피그마 느낌) */
+        border: 1px dashed #4854e0 !important;
         box-shadow: none !important;
         color: #4854e0 !important;
     }
@@ -119,10 +126,10 @@ st.markdown("""
         font-weight: 700 !important;
     }
     button:has(div:contains("자격증 추가")):hover {
-        background-color: #F5F7FF !important; /* 호버 시 아주 연한 보라 */
+        background-color: #F5F7FF !important;
     }
 
-    /* 익스펜더 스타일 */
+    /* 익스펜더 */
     .stExpander {
         background-color: #FFFFFF !important;
         border: 1px solid #E5E8EB !important;
@@ -137,7 +144,7 @@ st.markdown("""
         padding: 15px !important;
     }
 
-    /* 결과 화면 카드 헤더 */
+    /* 결과 화면 */
     .result-header {
         font-size: 1.1rem;
         font-weight: 800;
@@ -147,21 +154,15 @@ st.markdown("""
         padding-bottom: 5px;
     }
 
-    /* 요약 태그 스타일 */
     .summary-tag {
-        display: inline-block;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin-right: 6px;
-        margin-bottom: 8px;
+        display: inline-block; padding: 6px 14px;
+        border-radius: 20px; font-size: 0.9rem; font-weight: 600;
+        margin-right: 6px; margin-bottom: 8px;
     }
     .tag-major { background-color: #EEF2FF; color: #4F46E5; border: 1px solid #C7D2FE; }
     .tag-corp { background-color: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
     .tag-bridge { background-color: #FFF7ED; color: #EA580C; border: 1px solid #FED7AA; font-size: 1rem; padding: 8px 16px; }
     
-    /* 기프티콘 버튼 */
     .gift-button {
         display: block; width: 100%;
         background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
@@ -188,7 +189,6 @@ if 'has_no_spec' not in st.session_state: st.session_state.has_no_spec = False
 for key in ['school', 'major', 'target', 'job', 'exp', 'result', 'summary_major', 'summary_corp', 'summary_bridge']:
     if key not in st.session_state: st.session_state[key] = ""
 
-# [기능 함수] 커스텀 진행바 렌더링
 def render_progress_bar(step, total_steps):
     percent = int((step / total_steps) * 100)
     st.markdown(f"""
@@ -200,7 +200,6 @@ def render_progress_bar(step, total_steps):
 
 # [메인 로직]
 with streamlit_analytics.track():
-    # Hero Section
     st.markdown("""
         <div class="hero-section">
             <h1 class="hero-title">VALUE BRIDGE</h1>
@@ -210,27 +209,26 @@ with streamlit_analytics.track():
 
     render_progress_bar(st.session_state.step, 4)
 
-    # --- 1단계: 소속 정보 ---
+    # --- 1단계 ---
     if st.session_state.step == 1:
         st.subheader("먼저, 당신의 소속을 알려주세요 🎓")
         st.session_state.school = st.text_input("📍 대학교", value=st.session_state.school, placeholder="예: 한양대학교 ERICA")
         st.session_state.major = st.text_input("📚 전공", value=st.session_state.major, placeholder="예: 경제학부")
         
-        st.write("")
+        # [수정] 빈 공간을 만드는 st.write("") 제거
         if st.button("내 가치 연결하기 →"):
             if st.session_state.school and st.session_state.major: st.session_state.step = 2; st.rerun()
             else: st.error("정보를 입력해 주세요.")
 
-    # --- 2단계: 목표 및 자격증 ---
+    # --- 2단계 ---
     elif st.session_state.step == 2:
         st.subheader("어떤 기업에서 어떤 일을 하고 싶으신가요? 🏢")
         st.session_state.target = st.text_input("🏢 목표 기업", value=st.session_state.target, placeholder="예: 한국은행, 신한은행")
         st.session_state.job = st.text_input("🎯 목표 직무", value=st.session_state.job, placeholder="예: 금융상품 기획, 리스크 관리")
         
-        # [수정] 라벨 스타일을 HTML로 직접 구현하여 배경 박스 제거 및 스타일 통일
-        st.write("")
+        # [수정] st.write("") 제거 후 라벨 바로 표시
         st.markdown("""
-            <div style="font-size: 14px; font-weight: 400; color: #31333F; margin-bottom: 8px;">
+            <div style="font-size: 14px; font-weight: 400; color: #31333F; margin-bottom: 8px; margin-top: 20px;">
             📜 보유 자격증/어학 성적
             </div>
         """, unsafe_allow_html=True)
@@ -241,51 +239,44 @@ with streamlit_analytics.track():
             for i in range(len(st.session_state.spec_list)):
                 st.session_state.spec_list[i] = st.text_input(f"자격증 {i+1}", value=st.session_state.spec_list[i], key=f"s_{i}", label_visibility="collapsed", placeholder="예: AFPK, ADsP, 토익 900")
             
-            # [수정] '자격증 추가' 버튼 (CSS에서 투명 배경 & 보라색 글씨 적용됨)
             if st.button("＋ 자격증 추가"): 
                 st.session_state.spec_list.append("")
                 st.rerun()
             
-        st.write("")
+        # [수정] 빈 공간 제거
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("← 이전"): 
-                st.session_state.step = 1
-                st.rerun()
+            if st.button("← 이전"): st.session_state.step = 1; st.rerun()
         with col2:
-            # 버튼 클릭 여부를 변수에 저장만 하고 넘어갑니다 (화면 그리기용)
             go_next = st.button("다음으로 →")
-        
-        # [핵심 수정] 컬럼 밖으로 나와서 검사 -> 에러 메시지가 전체 너비로 뜹니다
+            
         if go_next:
-            if st.session_state.target and st.session_state.job: 
-                st.session_state.step = 3
-                st.rerun()
-            else: 
-                st.error("목표 기업과 직무를 입력해 주세요.")
+            if st.session_state.target and st.session_state.job: st.session_state.step = 3; st.rerun()
+            else: st.error("목표 기업과 직무를 입력해 주세요.")
 
-    # --- 3단계: 경험 기술 ---
+    # --- 3단계 ---
     elif st.session_state.step == 3:
         st.subheader("당신의 가장 빛나는 경험을 들려주세요 ✨")
         st.session_state.exp = st.text_area("🌟 주요 경험 및 활동", value=st.session_state.exp, height=200, placeholder="예: 프로젝트, 인턴십, 아르바이트 등 드러내고 싶은 경험")
         
-        st.write("")
+        # [수정] 빈 공간 제거
         col1, col2 = st.columns(2)
         with col1:
             if st.button("← 이전"): st.session_state.step = 2; st.rerun()
         with col2:
-            if st.button("가치 브릿지 생성 🚀"):
-                if st.session_state.exp: st.session_state.step = 4; st.rerun()
-                else: st.error("분석할 경험을 입력해 주세요.")
+            create_report = st.button("가치 브릿지 생성 🚀")
+            
+        if create_report:
+            if st.session_state.exp: st.session_state.step = 4; st.rerun()
+            else: st.error("경험 내용을 입력해 주세요.")
 
-    # --- 4단계: 결과 리포트 (공백 최소화 적용) ---
+    # --- 4단계 ---
     elif st.session_state.step == 4:
         if not st.session_state.result:
             with st.spinner(f"{st.session_state.target}의 최신 데이터를 분석 중입니다..."):
                 try:
                     spec_summary = "보유 자격증 없음" if st.session_state.has_no_spec else ", ".join([s for s in st.session_state.spec_list if s.strip()])
                     
-                    # [프롬프트 유지]
                     prompt = f"""
                     [역할 정의]
                     당신은 대기업 및 금융권 채용을 정밀 분석하는 **'HR 컨설턴트 겸 애널리스트'**입니다. 구글 검색을 통해 목표 기업의 최신 동향과 보유 자격증의 실무적 가치를 조사하여 **[VALUE BRIDGE 리포트]**를 작성하세요.
@@ -368,7 +359,7 @@ with streamlit_analytics.track():
                     st.error(f"분석 중 문제가 발생했습니다. (Error: {e})")
                     st.info("💡 팁: 잠시 후 다시 시도해 주세요.")
 
-        # --- [결과 화면 UI: 공백 제거 및 구조화] ---
+        # --- 결과 화면 UI ---
         st.subheader("🎯 분석 결과 요약")
 
         col1, col2 = st.columns(2)
@@ -412,12 +403,14 @@ with streamlit_analytics.track():
         with st.expander("리포트 전체 보기 (클릭하여 열기)", expanded=False):
             st.markdown(st.session_state.result)
         
+        # [수정] 빈 공간 제거
         st.markdown("""
             <a href="https://docs.google.com/forms/d/e/1FAIpQLSd7cYP6QwTthzoEdlAyObugotZWGOYgqk7eJ323tvspGA0AGA/viewform" target="_blank" class="gift-button">
             🎁 수요조사 참여하고 기프티콘 받기! (클릭)
             </a>
         """, unsafe_allow_html=True)
         
+        # [수정] 빈 공간 제거
         if st.button("🔄 처음부터 다시 하기"):
             for k in ['school','major','target','job','exp','result','summary_major','summary_corp','summary_bridge']: st.session_state[k] = ""
             st.session_state.spec_list = [""]; st.session_state.has_no_spec = False; st.session_state.step = 1; st.rerun()
