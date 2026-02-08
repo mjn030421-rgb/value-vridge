@@ -249,11 +249,20 @@ with streamlit_analytics.track():
         st.write("")
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("← 이전"): st.session_state.step = 1; st.rerun()
+            if st.button("← 이전"): 
+                st.session_state.step = 1
+                st.rerun()
         with col2:
-            if st.button("다음으로 →"):
-                if st.session_state.target and st.session_state.job: st.session_state.step = 3; st.rerun()
-                else: st.error("목표 기업과 직무를 입력해 주세요.")
+            # 버튼 클릭 여부를 변수에 저장만 하고 넘어갑니다 (화면 그리기용)
+            go_next = st.button("다음으로 →")
+        
+        # [핵심 수정] 컬럼 밖으로 나와서 검사 -> 에러 메시지가 전체 너비로 뜹니다
+        if go_next:
+            if st.session_state.target and st.session_state.job: 
+                st.session_state.step = 3
+                st.rerun()
+            else: 
+                st.error("목표 기업과 직무를 입력해 주세요.")
 
     # --- 3단계: 경험 기술 ---
     elif st.session_state.step == 3:
