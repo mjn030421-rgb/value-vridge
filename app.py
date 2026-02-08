@@ -216,10 +216,10 @@ with streamlit_analytics.track():
         st.session_state.school = st.text_input("📍 대학교", value=st.session_state.school, placeholder="예: 한양대학교 ERICA")
         st.session_state.major = st.text_input("📚 전공", value=st.session_state.major, placeholder="예: 경제학부")
         
-        st.write("")
-        if st.button("내 가치 연결하기 →"):
+        
+        if st.button("다음 →"):
             if st.session_state.school and st.session_state.major: st.session_state.step = 2; st.rerun()
-            else: st.error("정보를 입력해 주세요.")
+            else: st.error("정보를 모두 입력해 주세요.")
 
     # --- 2단계: 목표 및 자격증 ---
     elif st.session_state.step == 2:
@@ -228,7 +228,7 @@ with streamlit_analytics.track():
         st.session_state.job = st.text_input("🎯 목표 직무", value=st.session_state.job, placeholder="예: 금융상품 기획, 리스크 관리")
         
         # [수정] 라벨 스타일을 HTML로 직접 구현하여 배경 박스 제거 및 스타일 통일
-        st.write("")
+        
         st.markdown("""
             <div style="font-size: 14px; font-weight: 400; color: #31333F; margin-bottom: 8px;">
             📜 보유 자격증/어학 성적
@@ -246,7 +246,7 @@ with streamlit_analytics.track():
                 st.session_state.spec_list.append("")
                 st.rerun()
             
-        st.write("")
+        
         col1, col2 = st.columns(2)
         with col1:
             if st.button("← 이전"): 
@@ -269,7 +269,7 @@ with streamlit_analytics.track():
         st.subheader("당신의 가장 빛나는 경험을 들려주세요 ✨")
         st.session_state.exp = st.text_area("🌟 주요 경험 및 활동", value=st.session_state.exp, height=200, placeholder="예: 프로젝트, 인턴십, 아르바이트 등 드러내고 싶은 경험")
         
-        st.write("")
+        
         col1, col2 = st.columns(2)
         with col1:
             if st.button("← 이전"): st.session_state.step = 2; st.rerun()
