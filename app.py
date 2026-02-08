@@ -13,7 +13,7 @@ st.markdown("""
     
     .stApp { background-color: #F9FAFB !important; font-family: 'Pretendard', sans-serif !important; }
 
-    /* Hero Section */
+    /* [수정] Hero Section */
     .hero-section {
         background: linear-gradient(135deg, #4854e0 0%, #6b74e8 100%);
         padding: 50px 30px;
@@ -22,55 +22,23 @@ st.markdown("""
         margin: -60px -100px 30px -100px;
         box-shadow: 0 10px 30px rgba(72, 84, 224, 0.2);
     }
-    .hero-title { 
-        font-size: 2.5rem !important; 
-        font-weight: 800 !important; 
-        color: #FFFFFF !important;
-        margin-bottom: 10px; 
-    }
-    .hero-sub { 
-        font-size: 1rem !important; 
-        color: #FFFFFF !important;
-        opacity: 0.9;
-    }
+    .hero-title { font-size: 2.5rem !important; font-weight: 800 !important; color: #FFFFFF !important; margin-bottom: 10px; }
+    .hero-sub { font-size: 1rem !important; color: #FFFFFF !important; opacity: 0.9; }
 
-    /* 진행 바 */
-    .progress-container {
-        width: 100%;
-        background-color: #E5E7EB;
-        border-radius: 20px;
-        margin-bottom: 25px;
-        height: 12px;
-        overflow: hidden;
-    }
-    .progress-bar-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #4854e0 0%, #6b74e8 100%);
-        border-radius: 20px;
-        transition: width 0.5s ease-in-out;
-    }
-    .progress-text {
-        text-align: right;
-        font-size: 0.85rem;
-        color: #6B7280;
-        margin-bottom: 5px;
-        font-weight: 600;
-    }
-
-    /* 둥근 카드 스타일 */
-    [data-testid="stVerticalBlock"] > div:has(div.stMarkdown) {
-        background-color: white !important;
+    /* [중요 수정] 'st.container(border=True)'만 카드로 만들기 */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: #FFFFFF !important;
         border-radius: 24px !important;
-        padding: 20px !important;
+        padding: 24px !important;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05) !important;
         border: 1px solid #F3F4F6 !important;
-        margin-bottom: 15px !important;
+        margin-bottom: 20px !important;
     }
 
     /* 텍스트 색상 */
     h2, h3, h4, p, span, label, div { color: #1F2937 !important; }
     
-    /* 입력창 */
+    /* 입력창 디자인 */
     input, textarea, [data-baseweb="input"] {
         background-color: #F9FAFB !important;
         border: 1px solid #E5E7EB !important;
@@ -79,15 +47,14 @@ st.markdown("""
     }
     input::placeholder { color: #9CA3AF !important; }
 
-    /* 체크박스 글씨 */
+    /* [수정] 자격증 체크박스 - 밝은 보라색 */
     [data-testid="stCheckbox"] label p {
         color: #4854e0 !important;
         font-weight: 700 !important;
-        font-size: 1rem !important;
     }
 
-    /* 버튼 스타일 */
-    .stButton>button {
+    /* [수정] 메인 버튼 (Primary) - 그라디언트 */
+    [data-testid="baseButton-primary"] {
         background: linear-gradient(90deg, #4854e0 0%, #6b74e8 100%) !important;
         color: #FFFFFF !important;
         border-radius: 50px !important;
@@ -97,81 +64,40 @@ st.markdown("""
         width: 100%;
         transition: 0.3s;
     }
-    .stButton>button * { color: #FFFFFF !important; }
-    .stButton>button:hover { 
+    [data-testid="baseButton-primary"]:hover { 
         transform: translateY(-2px); 
         box-shadow: 0 6px 20px rgba(72, 84, 224, 0.4) !important; 
-        color: #FFFFFF !important;
     }
 
-    /* 이전 버튼 */
+    /* [수정] 서브 버튼 (Secondary - 자격증 추가용) - 투명 배경 & 보라색 글씨 */
+    [data-testid="baseButton-secondary"] {
+        background: transparent !important;
+        border: 1px solid #4854e0 !important; /* 깔끔한 테두리 */
+        color: #4854e0 !important;
+        border-radius: 50px !important;
+        font-weight: 700 !important;
+        width: 100%;
+    }
+    [data-testid="baseButton-secondary"]:hover {
+        background-color: #F5F7FF !important;
+    }
+    /* 버튼 내부 텍스트 색상 강제 지정 */
+    [data-testid="baseButton-secondary"] p {
+        color: #4854e0 !important;
+    }
+
+    /* 이전 버튼 (회색) */
     div[data-testid="column"] .stButton>button:has(div:contains("이전")) {
         background: #F3F4F6 !important;
         color: #4B5563 !important;
         box-shadow: none !important;
+        border: none !important;
     }
-    div[data-testid="column"] .stButton>button:has(div:contains("이전")) * {
-        color: #4B5563 !important;
-    }
-
-    /* 자격증 추가 버튼 */
-    button:has(div:contains("자격증 추가")) {
-        background: transparent !important;
-        border: 1px dashed #4854e0 !important;
-        box-shadow: none !important;
-        color: #4854e0 !important;
-    }
-    button:has(div:contains("자격증 추가")) * {
-        color: #4854e0 !important;
-        font-weight: 700 !important;
-    }
-    button:has(div:contains("자격증 추가")):hover {
-        background-color: #F5F7FF !important;
-    }
-
-    /* 익스펜더 */
-    .stExpander {
-        background-color: #FFFFFF !important;
-        border: 1px solid #E5E8EB !important;
-        border-radius: 16px !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
-    }
-    .stExpander details summary {
-        color: #3182F6 !important;
-        font-weight: 700 !important;
-        background-color: #F9FAFB !important;
-        border-radius: 16px !important;
-        padding: 15px !important;
-    }
-
-    /* 결과 화면 */
-    .result-header {
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #4854e0 !important;
-        margin-bottom: 10px;
-        border-bottom: 2px solid #F3F4F6;
-        padding-bottom: 5px;
-    }
-
-    .summary-tag {
-        display: inline-block; padding: 6px 14px;
-        border-radius: 20px; font-size: 0.9rem; font-weight: 600;
-        margin-right: 6px; margin-bottom: 8px;
-    }
-    .tag-major { background-color: #EEF2FF; color: #4F46E5; border: 1px solid #C7D2FE; }
-    .tag-corp { background-color: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
-    .tag-bridge { background-color: #FFF7ED; color: #EA580C; border: 1px solid #FED7AA; font-size: 1rem; padding: 8px 16px; }
     
-    .gift-button {
-        display: block; width: 100%;
-        background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
-        color: #005F4F; text-align: center; padding: 15px;
-        border-radius: 16px; text-decoration: none; font-weight: 800;
-        font-size: 1.1rem; box-shadow: 0 4px 15px rgba(0, 201, 255, 0.3);
-        transition: 0.3s;
-    }
-    .gift-button:hover { transform: scale(1.02); color: #004D40; }
+    /* 나머지 CSS (익스펜더, 결과 헤더 등) 유지... */
+    .result-header { font-size: 1.1rem; font-weight: 800; color: #4854e0 !important; margin-bottom: 10px; border-bottom: 2px solid #F3F4F6; padding-bottom: 5px; }
+    .stExpander { background-color: #FFFFFF !important; border: 1px solid #E5E8EB !important; border-radius: 16px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important; }
+    .gift-button { display: block; width: 100%; background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%); color: #005F4F; text-align: center; padding: 15px; border-radius: 16px; font-weight: 800; text-decoration: none; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -221,34 +147,38 @@ with streamlit_analytics.track():
             else: st.error("정보를 입력해 주세요.")
 
     # --- 2단계 ---
+    # --- 2단계: 목표 및 자격증 ---
     elif st.session_state.step == 2:
-        st.subheader("어떤 기업에서 어떤 일을 하고 싶으신가요? 🏢")
-        st.session_state.target = st.text_input("🏢 목표 기업", value=st.session_state.target, placeholder="예: 한국은행, 신한은행")
-        st.session_state.job = st.text_input("🎯 목표 직무", value=st.session_state.job, placeholder="예: 금융상품 기획, 리스크 관리")
-        
-        # [수정] st.write("") 제거 후 라벨 바로 표시
-        st.markdown("""
-            <div style="font-size: 14px; font-weight: 400; color: #31333F; margin-bottom: 8px; margin-top: 20px;">
-            📜 보유 자격증/어학 성적
-            </div>
-        """, unsafe_allow_html=True)
-        
-        st.session_state.has_no_spec = st.checkbox("보유한 자격증이 없습니다 (없음)", value=st.session_state.has_no_spec)
-        
-        if not st.session_state.has_no_spec:
-            for i in range(len(st.session_state.spec_list)):
-                st.session_state.spec_list[i] = st.text_input(f"자격증 {i+1}", value=st.session_state.spec_list[i], key=f"s_{i}", label_visibility="collapsed", placeholder="예: AFPK, ADsP, 토익 900")
+        # [핵심] border=True를 써서 이 안의 내용물 전체를 하나의 예쁜 카드로 감쌉니다.
+        with st.container(border=True):
+            st.subheader("어떤 기업에서 어떤 일을 하고 싶으신가요? 🏢")
+            st.session_state.target = st.text_input("🏢 목표 기업", value=st.session_state.target, placeholder="예: 한국은행, 신한은행")
+            st.session_state.job = st.text_input("🎯 목표 직무", value=st.session_state.job, placeholder="예: 금융상품 기획, 리스크 관리")
             
-            if st.button("＋ 자격증 추가"): 
-                st.session_state.spec_list.append("")
-                st.rerun()
+            # [수정] 배경 박스 없이 깔끔한 라벨 (위의 입력창 라벨과 스타일 통일)
+            st.markdown("""
+                <div style="font-size: 14px; font-weight: 400; color: #31333F; margin-bottom: 8px; margin-top: 20px;">
+                📜 보유 자격증/어학 성적
+                </div>
+            """, unsafe_allow_html=True)
             
-        # [수정] 빈 공간 제거
+            st.session_state.has_no_spec = st.checkbox("보유한 자격증이 없습니다 (없음)", value=st.session_state.has_no_spec)
+            
+            if not st.session_state.has_no_spec:
+                for i in range(len(st.session_state.spec_list)):
+                    st.session_state.spec_list[i] = st.text_input(f"자격증 {i+1}", value=st.session_state.spec_list[i], key=f"s_{i}", label_visibility="collapsed", placeholder="예: AFPK, ADsP, 토익 900")
+                
+                # [수정] type="secondary"를 줘서 CSS에서 보라색 글씨/투명 배경 적용
+                if st.button("＋ 자격증 추가", type="secondary"): 
+                    st.session_state.spec_list.append("")
+                    st.rerun()
+            
         col1, col2 = st.columns(2)
         with col1:
             if st.button("← 이전"): st.session_state.step = 1; st.rerun()
         with col2:
-            go_next = st.button("다음으로 →")
+            # [수정] type="primary"를 줘서 그라디언트 배경 적용
+            go_next = st.button("다음으로 →", type="primary")
             
         if go_next:
             if st.session_state.target and st.session_state.job: st.session_state.step = 3; st.rerun()
